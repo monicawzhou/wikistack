@@ -11,10 +11,11 @@ const layout = require('./views/layout');
 
 app.use(morgan('dev'));
 app.use(express.static(__dirname + '/public'));
-app.use(wikiRoutes);
+app.use('/wiki', wikiRoutes);
 
 app.get('/', (req, res) => {
-  res.send(layout(''));
+  res.redirect('/wiki');
+  // res.send(layout(''));
 });
 
 db.authenticate().then(() => {

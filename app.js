@@ -3,6 +3,7 @@ const express = require('express');
 const { db, Page, User } = require('./models');
 const wikiRoutes = require('./routes/wiki');
 const userRoutes = require('./routes/user');
+const main = require('./views/main');
 
 const app = express();
 app.use(express.urlencoded({ extended: false }));
@@ -12,18 +13,23 @@ const layout = require('./views/layout');
 app.use(morgan('dev'));
 app.use(express.static(__dirname + '/public'));
 app.use('/wiki', wikiRoutes);
+app.use('/users', userRoutes);
 
-app.get('/', (req, res) => {
-  res.redirect('/wiki');
+app.get('/', async (req, res) => {
+
+  let page = await Page.findAll();
+
+  res.send(main(page));
   // res.send(layout(''));
 });
+
 
 db.authenticate().then(() => {
   console.log('connected to the database');
 });
 
 const init = async () => {
-  await db.sync({ force: true });
+  await db.sync();
 
   const PORT = 3000;
 
